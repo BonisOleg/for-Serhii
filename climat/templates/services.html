@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Послуги" %} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="catalog-page">
+    <div class="catalog-content">
+        <h1>{% trans "Наші послуги" %}</h1>
+
+        <!-- Динамічна сітка послуг з анімацією появи -->
+        <div class="reveal-on-scroll" id="service-list-container">
+            {% for service in services %}
+            <article class="article-card service-card article-modal-trigger" data-id="service-{{ service.pk }}"
+                data-modal-content-id="service-{{ service.pk }}-content"
+                data-image-src="{% if service.image %}{{ service.image.url }}{% else %}{% static 'img/placeholder.png' %}{% endif %}">
+                <div class="article-card-image">
+                    {% if service.image %}
+                    <img src="{{ service.image.url }}" alt="{{ service.name }}">
+                    {% else %}
+                    <img src="{% static 'img/placeholder.png' %}" alt="Фото відсутнє" class="product-image-placeholder">
+                    {% endif %}
+                </div>
+                <div class="article-card-content">
+                    <h3 class="article-card-title">{{ service.name }}</h3>
+                    <div class="article-card-excerpt">
+                        <p>{{ service.description|default:"Опис послуги відсутній." }}</p>
+                    </div>
+                    <span class="article-card-price">від {{ service.price|floatformat:"0" }} грн</span>
+                </div>
+            </article>
+            {% empty %}
+            <p class="no-products-message">{% trans "Наразі немає доступних послуг." %}</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Динамічно генеровані приховані повні описи послуг для модальних вікон -->
+<div class="modal-product-content-storage" id="serviceModalContentStorage">
+    {% for service in services %}
+    <div id="service-{{ service.pk }}-content">
+        <h2>{{ service.name }}</h2>
+        <div class="product-specs">
+            <div class="spec-item">
+                <span class="spec-label">{% trans "Ціна:" %}</span>
+                <span class="spec-value price">від {{ service.price|floatformat:"0" }} грн</span>
+            </div>
+        </div>
+
+        <div class="product-description">
+            <h3>{% trans "Опис послуги" %}</h3>
+            <p>{{ service.description|default:"Детальний опис послуги відсутній." }}</p>
+        </div>
+
+        <div class="product-actions">
+            {# Тимчасово прибираємо trans, доки переклади не скомпільовані #}
+            <button class="cta-button product-order-btn" data-service-id="{{ service.pk }}">Замовити послугу</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Модальне вікно для послуг -->
+<div id="articleModal" class="modal">
+    <div class="modal-content service-modal-content">
+        <div class="modal-close article-modal-close">&times;</div>
+        <div class="modal-scroll-container">
+            <div class="modal-title"></div>
+            <div class="modal-full-content"></div>
+        </div>
+    </div>
+    <div class="modal-overlay article-modal-overlay"></div>
+</div>
+
+{% endblock %}

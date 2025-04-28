@@ -1,0 +1,9 @@
+<form id="feedback-form-actual" method="post" action="#" data-action-url="{% url 'airinua:submit_feedback' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {% if product %}
+    <input type="hidden" name="product_id" value="{{ product.id }}">
+    {% endif %}
+    <button type="submit" class="cta-button">Відправити заявку</button>
+    <div class="form-message" style="margin-top: 15px;"></div>
+</form>
